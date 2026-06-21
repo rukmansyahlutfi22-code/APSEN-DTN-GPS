@@ -3,142 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulir Absensi</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding: 20px; }
-        #kamera { width: 100%; max-width: 300px; border-radius: 10px; background: #ddd; }
-        .btn-absen { background: #28a745; color: white; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; margin-top: 20px; }
-    </style>
-</head>
-<body>
-
-    <h3>Silakan Lakukan Absensi</h3>
-    <video id="kamera" autoplay playsinline></video>
-    <br>
-    <p id="infoLokasi">Mengecek lokasi...</p>
-    <button class="btn-absen" onclick="kirimAbsen()">KONFIRMASI ABSENSI</button>
-
-    <script>
-        // 1. Inisialisasi Kamera
-        async function startCamera() {
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                document.getElementById('kamera').srcObject = stream;
-            } catch (err) {
-                alert("Kamera tidak ditemukan atau izin ditolak.");
-            }
-        }
-
-        // 2. Tampilkan Koordinat dari Login
-        const lat = localStorage.getItem("userLat");
-        const lon = localStorage.getItem("userLon");
-        document.getElementById('infoLokasi').innerText = `Lokasi Terdeteksi: ${lat}, ${lon}`;
-
-        // 3. Fungsi Kirim Data
-        function kirimAbsen() {
-            // Di sini nanti Bapak panggil fungsi untuk kirim ke Google Sheets
-            // seperti yang kita bahas sebelumnya
-            alert("Absensi berhasil tercatat dengan koordinat: " + lat + ", " + lon);
-        }
-
-        startCamera();
-    </script>
-    <script>
-    // 1. Inisialisasi Kamera
-    async function startCamera() {
-        // ... (kode kamera yang sudah ada)
-    }
-
-    // 2. Tampilkan Koordinat dari Login
-    const lat = localStorage.getItem("userLat");
-    const lon = localStorage.getItem("userLon");
-    document.getElementById('infoLokasi').innerText = `Lokasi: ${lat}, ${lon}`;
-
-    // 3. Fungsi Kirim Data (PASTE LINK DI BAWAH INI)
-    function kirimAbsen() {
-        // GANTI TULISAN DI BAWAH INI DENGAN URL WEB APP BAPAK
-        const URL_GOOGLE_SHEET = "https://script.google.com/macros/s/AKfycbx-vAuclG_artHZ1lrOz0-MD1PdKeVJBvLqO45cEXLWE9fj6NpXbuH-PVSx_eLUtLPd/exec"; 
-
-        const data = {
-            nama: "Nama User", // Bapak bisa buat input field untuk nama
-            lokasi: lat + ", " + lon
-        };
-
-        fetch(https://script.google.com/macros/s/AKfycbx-vAuclG_artHZ1lrOz0-MD1PdKeVJBvLqO45cEXLWE9fj6NpXbuH-PVSx_eLUtLPd/exec, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data)
-        })
-        .then(() => alert("Absensi Berhasil!"));
-    }
-
-    startCamera();
-</script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Absensi Desa</title>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; padding: 10px; }
-        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        body { font-family: sans-serif; background-color: #f4f7f9; padding: 15px; }
+        .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         #kamera { width: 100%; border-radius: 10px; background: #000; }
+        .btn-confirm { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 8px; font-weight: bold; margin-top: 10px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th, td { border-bottom: 1px solid #eee; padding: 8px; text-align: left; }
     </style>
 </head>
 <body>
 
     <div class="card">
         <h3>Profil Perangkat</h3>
-        <p>Nama: <span id="Rukmansyah">Rukmansyah</span></p>
-        <p>Jabatan: <span id="Sekretaris">Sekretaris</span></p>
+        <p>Nama: <b>Rukmansyah</b></p>
+        <p>Jabatan: <b>Sekretaris</b></p>
     </div>
 
     <div class="card">
         <video id="kamera" autoplay playsinline></video>
-        <p id="infoLokasi">Lokasi: Mencari...</p>
-        <button style="width:100%; padding:15px; background:green; color:white; border:none;" onclick="kirimAbsen()">KONFIRMASI ABSENSI</button>
+        <p id="info">Lokasi: Mencari...</p>
+        <button class="btn-confirm" onclick="kirim()">KONFIRMASI ABSENSI</button>
     </div>
 
     <div class="card">
         <h3>Riwayat Absensi</h3>
-        <table id="tabelRiwayat">
-            <tr><th>Waktu</th><th>Lokasi</th></tr>
+        <table>
+            <thead><tr><th>Waktu</th><th>Status</th></tr></thead>
+            <tbody id="bodyRiwayat"></tbody>
         </table>
     </div>
 
     <script>
-        // Mengambil data dari login (yang tersimpan di LocalStorage)
-        document.getElementById("namaUser").innerText = localStorage.getItem("namaUser") || "User";
-        document.getElementById("jabatanUser").innerText = localStorage.getItem("jabatanUser") || "Staf";
-
-        // Fungsi Kamera & GPS
-        async function startCamera() {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            document.getElementById('kamera').srcObject = stream;
+        // Jalankan Kamera
+        async function start() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                document.getElementById('kamera').srcObject = stream;
+            } catch (e) { alert("Izinkan kamera!"); }
         }
-        startCamera();
-
-        // Mengambil posisi GPS
+        
+        // Deteksi Lokasi
         navigator.geolocation.getCurrentPosition(pos => {
-            document.getElementById('infoLokasi').innerText = `Lokasi: ${pos.coords.latitude}, ${pos.coords.longitude}`;
+            document.getElementById('info').innerText = "Lokasi: " + pos.coords.latitude + ", " + pos.coords.longitude;
         });
 
-        // Fungsi Kirim Absen
-        function kirimAbsen() {
-            // Logika pengiriman ke Google Sheets (gunakan URL App Script Bapak)
-            alert("Data sedang dikirim ke Google Sheets...");
-            // Setelah berhasil, tambahkan baris ke tabel riwayat secara otomatis
-            let tabel = document.getElementById("tabelRiwayat");
-            let row = tabel.insertRow(1);
-            row.insertCell(0).innerText = new Date().toLocaleTimeString();
-            row.insertCell(1).innerText = "Terkirim";
+        // Fungsi Kirim
+        function kirim() {
+            const URL = "ISI_URL_GOOGLE_SHEET_DISINI"; 
+            const data = { nama: "Rukmansyah", lokasi: document.getElementById('info').innerText };
+            
+            fetch(URL, { method: "POST", mode: "no-cors", body: JSON.stringify(data) })
+            .then(() => {
+                alert("Berhasil!");
+                let row = document.getElementById("bodyRiwayat").insertRow(0);
+                row.insertCell(0).innerText = new Date().toLocaleTimeString();
+                row.insertCell(1).innerText = "HADIR";
+            });
         }
+        start();
     </script>
 </body>
 </html>
