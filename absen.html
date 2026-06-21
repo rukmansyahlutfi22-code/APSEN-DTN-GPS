@@ -43,5 +43,37 @@
 
         startCamera();
     </script>
+    <script>
+    // 1. Inisialisasi Kamera
+    async function startCamera() {
+        // ... (kode kamera yang sudah ada)
+    }
+
+    // 2. Tampilkan Koordinat dari Login
+    const lat = localStorage.getItem("userLat");
+    const lon = localStorage.getItem("userLon");
+    document.getElementById('infoLokasi').innerText = `Lokasi: ${lat}, ${lon}`;
+
+    // 3. Fungsi Kirim Data (PASTE LINK DI BAWAH INI)
+    function kirimAbsen() {
+        // GANTI TULISAN DI BAWAH INI DENGAN URL WEB APP BAPAK
+        const URL_GOOGLE_SHEET = "https://script.google.com/macros/s/ABC123XYZ/exec"; 
+
+        const data = {
+            nama: "Nama User", // Bapak bisa buat input field untuk nama
+            lokasi: lat + ", " + lon
+        };
+
+        fetch(https://script.google.com/macros/s/AKfycbx-vAuclG_artHZ1lrOz0-MD1PdKeVJBvLqO45cEXLWE9fj6NpXbuH-PVSx_eLUtLPd/exec, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        })
+        .then(() => alert("Absensi Berhasil!"));
+    }
+
+    startCamera();
+</script>
 </body>
 </html>
