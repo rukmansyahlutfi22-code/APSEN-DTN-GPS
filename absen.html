@@ -77,3 +77,68 @@
 </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absensi Desa</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; padding: 10px; }
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        #kamera { width: 100%; border-radius: 10px; background: #000; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h3>Profil Perangkat</h3>
+        <p>Nama: <span id="namaUser">...</span></p>
+        <p>Jabatan: <span id="jabatanUser">...</span></p>
+    </div>
+
+    <div class="card">
+        <video id="kamera" autoplay playsinline></video>
+        <p id="infoLokasi">Lokasi: Mencari...</p>
+        <button style="width:100%; padding:15px; background:green; color:white; border:none;" onclick="kirimAbsen()">KONFIRMASI ABSENSI</button>
+    </div>
+
+    <div class="card">
+        <h3>Riwayat Absensi</h3>
+        <table id="tabelRiwayat">
+            <tr><th>Waktu</th><th>Lokasi</th></tr>
+        </table>
+    </div>
+
+    <script>
+        // Mengambil data dari login (yang tersimpan di LocalStorage)
+        document.getElementById("namaUser").innerText = localStorage.getItem("namaUser") || "User";
+        document.getElementById("jabatanUser").innerText = localStorage.getItem("jabatanUser") || "Staf";
+
+        // Fungsi Kamera & GPS
+        async function startCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            document.getElementById('kamera').srcObject = stream;
+        }
+        startCamera();
+
+        // Mengambil posisi GPS
+        navigator.geolocation.getCurrentPosition(pos => {
+            document.getElementById('infoLokasi').innerText = `Lokasi: ${pos.coords.latitude}, ${pos.coords.longitude}`;
+        });
+
+        // Fungsi Kirim Absen
+        function kirimAbsen() {
+            // Logika pengiriman ke Google Sheets (gunakan URL App Script Bapak)
+            alert("Data sedang dikirim ke Google Sheets...");
+            // Setelah berhasil, tambahkan baris ke tabel riwayat secara otomatis
+            let tabel = document.getElementById("tabelRiwayat");
+            let row = tabel.insertRow(1);
+            row.insertCell(0).innerText = new Date().toLocaleTimeString();
+            row.insertCell(1).innerText = "Terkirim";
+        }
+    </script>
+</body>
+</html>
